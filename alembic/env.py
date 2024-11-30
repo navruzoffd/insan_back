@@ -4,7 +4,7 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
-from src.database.database import Base, User, Family, Tasks, FamilyTask
+from src.database.database import Base, User, Family, Task, FamilyTask
 from config import settings
 
 # this is the Alembic Config object, which provides

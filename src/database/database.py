@@ -75,14 +75,14 @@ class Family(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     balance = Column(Integer, default=0)
-    completed_tasks = Column(Integer, default=0)
 
-class Tasks(Base):
-    __tablename__ = "tasks"
+class Task(Base):
+    __tablename__ = "task"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
     description = Column(String, nullable=False)
+    photo = Column(String)
     points = Column(Integer, nullable=False)
     
 class FamilyTask(Base):
@@ -90,9 +90,9 @@ class FamilyTask(Base):
     
     id = Column(Integer, primary_key=True, autoincrement=True)
     family_id = Column(ForeignKey('family.id'), nullable=False)
-    task_id = Column(ForeignKey('tasks.id'), nullable=False)
-    user_id = Column(ForeignKey('user.id'), nullable=True)
-    completed_at = Column(DateTime, default=datetime.now())
+    task_id = Column(ForeignKey('task.id'), nullable=False)
+    status = Column(String)
+    completed_at = Column(DateTime, default=None)
 
 class Post(Base):
     __tablename__ = "post"
@@ -100,9 +100,9 @@ class Post(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String)
     description = Column(String)
-    photo = ForeignKey(String)
+    photo = Column(String)
     reactions = Column(Integer)
-    creator = ForeignKey("user.id", nullable=False)
+    creator = Column(ForeignKey("user.id"))
 
 async def get_db() -> AsyncGenerator[SessionLocal, None]:  # type: ignore
     async with SessionLocal() as session:  # type: ignore
