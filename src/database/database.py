@@ -94,6 +94,16 @@ class FamilyTask(Base):
     user_id = Column(ForeignKey('user.id'), nullable=True)
     completed_at = Column(DateTime, default=datetime.now())
 
+class Post(Base):
+    __tablename__ = "post"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    title = Column(String)
+    description = Column(String)
+    photo = ForeignKey(String)
+    reactions = Column(Integer)
+    creator = ForeignKey("user.id", nullable=False)
+
 async def get_db() -> AsyncGenerator[SessionLocal, None]:  # type: ignore
     async with SessionLocal() as session:  # type: ignore
         try:
