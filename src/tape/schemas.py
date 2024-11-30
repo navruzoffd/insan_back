@@ -6,7 +6,7 @@ class AddPost(BaseModel):
     photo: str | None
     reactions: int
 
-class Post(AddPost):
+class PostModel(AddPost):
     id: int
    
 
