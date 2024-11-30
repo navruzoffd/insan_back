@@ -16,3 +16,6 @@ class RegisterSchema(BaseModel):
 class LoginSchema(BaseModel):
     email: EmailStr
     password: str = Field(min_length=4, max_length=50)
+
+class JWTData(BaseModel):
+    user: str
