@@ -7,7 +7,7 @@ from src.auth.schema import LoginSchema, RegisterSchema
 from utils import verify_password
 
 
-router = APIRouter(prefix="/auth", tags=["Authentication"])
+router = APIRouter()
 
 @router.post("")
 async def registration_user(
