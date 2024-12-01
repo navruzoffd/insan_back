@@ -32,3 +32,5 @@ async def complete(
 ):
     user = await get_user_by_id(session, auth.id)
     return await complete_task(session, task_id, user)
+
+

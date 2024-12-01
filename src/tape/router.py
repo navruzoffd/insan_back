@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -7,6 +7,7 @@ from src.auth.jwt import parse_jwt_user_data
 
 from src.tape.schemas import AddPost, PostModel
 from src.tape.service import get_all_posts, make_reaction, add_post
+from src.user.service import get_user_by_id
 
 router = APIRouter()
 
@@ -41,8 +42,8 @@ async def add_reaction(
     session: AsyncSession = Depends(get_db),
     _ = Depends(parse_jwt_user_data)
 ):
-    post = await make_reaction(session, post)
-    return post
+    await make_reaction(session, post)
+    
 
 
 @router.post("/add")
@@ -51,4 +52,7 @@ async def create_post(
     session: AsyncSession = Depends(get_db),
     auth = Depends(parse_jwt_user_data)
 ):
+    user = await get_user_by_id(session, auth.id)
+    if not user.family_id:
+        raise HTTPException(status_code=400, detail="User not in family")
     await add_post(session, post, auth.id)

@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
 
 from src.database.database import Post, fetch_one, fetch_all
-from tape.schemas import AddPost
+from src.tape.schemas import AddPost
 
 async def get_all_posts(session: AsyncSession) -> list[Post]:
     query = select(Post)

@@ -18,4 +18,4 @@ class LoginSchema(BaseModel):
     password: str = Field(min_length=4, max_length=50)
 
 class JWTData(BaseModel):
-    user: str
+    id: int

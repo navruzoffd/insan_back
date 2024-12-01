@@ -4,7 +4,7 @@ from src.auth.jwt import create_access_token
 from src.database.database import get_db
 from src.auth.service import create_user, get_user_by_email
 from src.auth.schema import LoginSchema, RegisterSchema
-from utils import verify_password
+from src.utils import verify_password
 
 
 router = APIRouter()
@@ -20,7 +20,7 @@ async def registration_user(
         raise HTTPException(status_code=400, detail="User already exists")
 
     user = await create_user(session, user_data)
-    return {"status": 200, "token": create_access_token({"sub": str(user.id)})}
+    return {"status": "success", "token": create_access_token(user=str(user.id))}
 
 
 @router.post("/login")
@@ -36,4 +36,4 @@ async def login_user(
     if not verify_password(log_user.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Incorrect password")
 
-    return {"status": 200, "token": create_access_token({"sub": str(user.id)})}
+    return {"status": "success", "token": create_access_token(user=str(user.id))}

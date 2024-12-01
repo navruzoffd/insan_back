@@ -17,7 +17,7 @@ async def create_user(session: AsyncSession, user: RegisterSchema) -> User:
 
     session.add(new_user)
     await session.commit()
-    return user 
+    return new_user 
 
 
 async def get_user_by_email(session: AsyncSession, email: str) -> User | None:

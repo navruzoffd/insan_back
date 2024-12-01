@@ -1,20 +1,17 @@
-from sqlalchemy.ext.asyncio import (create_async_engine,
-                                    async_sessionmaker,
-                                    AsyncSession)
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.engine import make_url
 
 from sqlalchemy import (
     Column,
     Integer,
-    BigInteger,
+    CursorResult,
     String,
-    Boolean,
     ForeignKey,
     DateTime,
     Select,
     Insert,
-    Update
+    Update,
 )
 from datetime import datetime
 
@@ -28,6 +25,7 @@ url = make_url(DATABASE_URL)
 async_engine = create_async_engine(url)
 Base_a = declarative_base()
 
+
 class Base(Base_a):
     __abstract__ = True
 
@@ -39,8 +37,13 @@ metadata = Base.metadata
 
 
 SessionLocal = async_sessionmaker(
-    autocommit=False, autoflush=False, bind=async_engine, class_=AsyncSession
+    autocommit=False,
+    autoflush=False,
+    bind=async_engine,
+    class_=AsyncSession,
+    expire_on_commit=False,
 )
+
 
 async def fetch_one(session: AsyncSession, select_query: Select | Insert | Update):
     cursor: CursorResult = await session.execute(select_query)  # type: ignore
@@ -60,7 +63,7 @@ async def execute(session: AsyncSession, select_query: Insert | Update) -> None:
 
 class User(Base):
     __tablename__ = "user"
-    
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
     lastname = Column(String, nullable=False)
@@ -68,13 +71,16 @@ class User(Base):
     email = Column(String, nullable=False, unique=True)
     hashed_password = Column(String, nullable=False)
     role = Column(String, nullable=False)
-    family_id = Column(ForeignKey('family.id'), unique=True)
+    family_id = Column(ForeignKey("family.id"), nullable=True)
+
 
 class Family(Base):
     __tablename__ = "family"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
     balance = Column(Integer, default=0)
+
 
 class Task(Base):
     __tablename__ = "task"
@@ -84,15 +90,17 @@ class Task(Base):
     description = Column(String, nullable=False)
     photo = Column(String)
     points = Column(Integer, nullable=False)
-    
+
+
 class FamilyTask(Base):
     __tablename__ = "family_task"
-    
+
     id = Column(Integer, primary_key=True, autoincrement=True)
-    family_id = Column(ForeignKey('family.id'), nullable=False)
-    task_id = Column(ForeignKey('task.id'), nullable=False)
+    family_id = Column(ForeignKey("family.id"), nullable=False)
+    task_id = Column(ForeignKey("task.id"), nullable=False)
     status = Column(String)
     completed_at = Column(DateTime, default=None)
+
 
 class Post(Base):
     __tablename__ = "post"
@@ -103,6 +111,7 @@ class Post(Base):
     photo = Column(String)
     reactions = Column(Integer)
     creator = Column(ForeignKey("user.id"))
+
 
 async def get_db() -> AsyncGenerator[SessionLocal, None]:  # type: ignore
     async with SessionLocal() as session:  # type: ignore

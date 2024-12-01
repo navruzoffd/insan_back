@@ -18,7 +18,7 @@ def create_access_token(
     expires_delta: timedelta = timedelta(minutes=auth_config.JWT_EXP),
 ) -> str:
     jwt_data = {
-        "user": user,
+        "id": user,
         "exp": datetime.utcnow() + expires_delta,
     }
     return jwt.encode(jwt_data, auth_config.JWT_SECRET, algorithm=auth_config.JWT_ALG)
